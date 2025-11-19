@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AR Interaction: Person & Station</title>
+    <script src="https://cdn.jsdelivr.net/gh/aframevr/aframe@1c2407b26c61958baa93967b5412487cd94b290b/dist/aframe-master.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+
+    <script>
+      AFRAME.registerComponent('card-interaction', {
+        schema: {
+          markerA: { type: 'selector' },
+          markerB: { type: 'selector' },
+          objA: { type: 'selector' },
+          objB: { type: 'selector' },
+          combinedObj: { type: 'selector' }
+        },
+        tick: function () {
+          const isPersonVisible = this.data.markerA.object3D.visible;
+          const isStationVisible = this.data.markerB.object3D.visible;
+
+          // Default: Hide interaction object
+          this.data.combinedObj.setAttribute('visible', false);
+          
+          if (isPersonVisible && isStationVisible) {
+            const posPerson = new THREE.Vector3();
+            const posStation = new THREE.Vector3();
+            
+            // Get positions
+            this.data.markerA.object3D.getWorldPosition(posPerson);
+            this.data.markerB.object3D.getWorldPosition(posStation);
+            
+            // Check Distance
+            const distance = posPerson.distanceTo(posStation);
+
+            // Logic: If closer than 300 pixels...
+            if (distance < 300) { 
+              // Show the combined effect
+              this.data.combinedObj.setAttribute('visible', true);
+              
+              // Move effect to the middle
+              const midPoint = new THREE.Vector3().addVectors(posPerson, posStation).multiplyScalar(0.5);
+              this.data.combinedObj.object3D.position.copy(midPoint);
+            }
+          }
+        }
+      });
+    </script>
+
+    <style>
+      .arjs-loader {
+        height: 100%; width: 100%; position: absolute; top: 0; left: 0; 
+        background-color: rgba(0, 0, 0, 0.8); z-index: 9999; 
+        display: flex; justify-content: center; align-items: center;
+      }
+      .arjs-loader div {
+        text-align: center; font-size: 1.25em; color: white; font-family: sans-serif;
+      }
+    </style>
+  </head>
+
+  <body style="margin: 0; overflow: hidden;">
+    <div class="arjs-loader"><div>Loading AR Experience...</div></div>
+
+    <a-scene 
+      vr-mode-ui="enabled: false;"
+      renderer="logarithmicDepthBuffer: true;"
+      embedded
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+      card-interaction="markerA: #nft-person; markerB: #nft-station; objA: #model-person; objB: #model-station; combinedObj: #interaction-effect"
+    >
+
+      <a-nft id="nft-person" type="nft" url="./sampleperson" 
+        smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5">
+          
+          <a-entity 
+            id="model-person" 
+            gltf-model="url(models/sample_person/scene.gltf)"
+            scale="150 150 150" 
+            position="50 0 -100"
+            rotation="-90 0 0">
+          </a-entity>
+      </a-nft>
+
+      <a-nft id="nft-station" type="nft" url="./samplestation" 
+        smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5">
+          
+          <a-entity 
+            id="model-station" 
+            gltf-model="url(models/sample_station/scene.gltf)"
+            scale="150 150 150" 
+            position="50 0 -100"
+            rotation="-90 0 0">
+          </a-entity>
+      </a-nft>
+
+      <a-dodecahedron 
+        id="interaction-effect" 
+        visible="false" 
+        radius="60" 
+        color="#FFD700" 
+        metalness="1"
+        animation="property: rotation; to: 360 360 0; loop: true; dur: 2000">
+      </a-dodecahedron>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+  </body>
+</html>
