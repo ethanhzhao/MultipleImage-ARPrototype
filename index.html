@@ -69,7 +69,7 @@
       card-interaction="markerA: #nft-person; markerB: #nft-station; objA: #model-person; objB: #model-station; combinedObj: #interaction-effect"
     >
 
-      <a-nft id="nft-person" type="nft" url="./sampleperson" 
+      <!-- <a-nft id="nft-person" type="nft" url="./sampleperson" 
         smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5">
           
           <a-entity 
@@ -79,7 +79,21 @@
             position="50 0 -100"
             rotation="-90 0 0">
           </a-entity>
-      </a-nft>
+      </a-nft> -->
+
+      <a-nft id="nft-person" type="nft" url="./sampleperson" 
+  smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5">
+    
+        <a-box position="0 0 0" scale="100 100 100" color="red"></a-box>
+
+        <a-entity 
+          id="model-person" 
+          gltf-model="url(models/sample_person/scene.gltf)"
+          scale="150 150 150" 
+          position="50 0 -100"
+          rotation="-90 0 0">
+        </a-entity>
+    </a-nft>
 
       <a-nft id="nft-station" type="nft" url="./samplestation" 
         smooth="true" smoothCount="10" smoothTolerance=".01" smoothThreshold="5">
